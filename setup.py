@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 import os.path
-import commands
 import itertools
 
 from distutils.core import setup
-from setuptools import find_packages
 from dss.version import version
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
 ##################################################
-pxd_files = commands.getoutput('find dss -name "*pxd"').split()
 extension_dependencies = {
     'dss.sys.Queue':['dss.sys.lock'],
     'dss.sys.LRUCache':[
@@ -94,7 +91,7 @@ c_src_files = {'dss.sys.time_of_day':['dss/sys/_time_of_day.c'],
 def get_src_file_paths(module_name):
     src_file_root = module_name.replace('.', os.path.sep)
     files = [src_file_root+'.pyx']
-    if src_file_root+'.pxd' in pxd_files:
+    if os.path.exists(src_file_root+'.pxd'):
         files.append(src_file_root+'.pxd')
     if module_name in c_src_files:
         files.extend(c_src_files[module_name])
@@ -161,9 +158,17 @@ setup(name = "Damn Simple Systems - Core Modules",
       license = 'BSD',
       url = "http://damnsimple.com/",
 
-      packages=['dss.'+p for p in find_packages('dss')],
-      zip_safe=False,
+      packages=[
+          'dss.sys',
+          'dss.sys.services',
+          'dss.sys._internal'
+          'dss.pubsub',
+          'dss.log',
+          'dss.net',
+          'dss.dsl',
+          'dss.dsl.html',
+          'dss.dsl.xml',
+          ],
       include_dirs=['dss/sys'],
       ext_modules=get_cython_extensions(),
-      cmdclass={'build_ext': build_ext},
-      )
+      cmdclass={'build_ext': build_ext})
