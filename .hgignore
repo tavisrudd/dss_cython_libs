@@ -1,0 +1,22 @@
+^build/.*$
+^.*so$
+^.*bak$
+^.*pyc$
+^.*pyo$
+
+# misc
+^.ropeproject/.*$
+
+## new locations of cython c files
+^dss/dsl/.*\.c$
+^dss/dsl/xml/.*\.c$
+^dss/net/.*\.c$
+^dss/pubsub/.*\.c$
+^dss/log/.*\.c$
+
+^dss/sys/Queue\.c$
+^dss/sys/LRUCache\.c$
+^dss/sys/lock\.c$
+^dss/sys/time_of_day\.c$
+
+^dss/sys/services/.*\.c$
