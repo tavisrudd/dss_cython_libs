@@ -5,8 +5,6 @@ from __future__ import with_statement
 from threading import Event
 from nose.tools import raises
 
-#from dss.sys.log import StdOutListener
-
 from dss.pubsub.MessageBus import MessageBus
 from dss.net.IOEventReactor import (
     IOEventReactor

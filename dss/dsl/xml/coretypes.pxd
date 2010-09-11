@@ -1,5 +1,3 @@
-from dss.dsl.safe_strings cimport safe_bytes, safe_unicode
-
 cdef class XmlDoc:
     cdef public object children, version, encoding
 

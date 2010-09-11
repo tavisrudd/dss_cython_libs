@@ -9,6 +9,11 @@ indicates if the reactor should unregister the fd from its event loop
 and does *not* require an instance of IOEventHandlerInterface or
 AbstractIOEventHandler.
 
+The event handling template defined by AbstractIOEventHandler is
+an optional convenience.  If you wish to deviate from it, just make
+sure that your handler is a good citizen by cleaning up stale fds and
+handling IO errors correctly.
+
 Handlers are responsible for handling *ALL* events related to
 their fd's and must cleanup if they are stale or an error occurs.
 
@@ -19,11 +24,6 @@ future, the kqueue events will probably be exposed directly to
 handlers rather than converting them into a synthetic eventmask that
 uses the POLL___ flags (this needs more thought ... not a high
 priority).
-
-The event handling template defined by AbstractIOEventHandler is
-an optional convenience.  If you wish to deviate from it, just make
-sure that your handler is a good citizen by cleaning up stale fds and
-handling IO errors correctly.
 
 Concrete subclasses of AbstractIOEventHandler, such as
 BufferedSocketIOHandler, just need to implement a few abstract

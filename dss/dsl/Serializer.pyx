@@ -53,13 +53,14 @@ from array import array
 
 from dss.dsl.VisitorMap import DEFAULT
 ## cimports:
-from python_unicode cimport PyUnicode_FromEncodedObject
-from python_object cimport PyObject_Str, PyObject_Unicode
+from cpython.unicode cimport PyUnicode_FromEncodedObject
+from cpython.object cimport PyObject_Str, PyObject_Unicode
 
 from dss.dsl.Walker cimport Walker
 from dss.dsl.Visitor cimport Visitor
 from dss.dsl.VisitorMap cimport VisitorMap
-from dss.dsl.safe_strings cimport safe_bytes, safe_unicode
+
+from dss.dsl.safe_strings import safe_bytes, safe_unicode
 
 cdef class NoneVisitor(Visitor):
     cpdef visit(self, obj, Walker walker):

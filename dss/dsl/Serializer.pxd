@@ -5,7 +5,6 @@ cdef extern from "Python.h":
 from cpython.list cimport PyList_New, PyList_Append
 
 from dss.dsl.Walker cimport Walker
-from dss.dsl.safe_strings cimport safe_unicode
 
 cdef class Serializer(Walker):
     cdef object _safe_unicode_buffer

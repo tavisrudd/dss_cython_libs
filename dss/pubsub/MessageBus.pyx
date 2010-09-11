@@ -118,10 +118,10 @@ cdef class MessageBus(Service):
         finally:
             self._mutex.release()
 
-    def is_valid_channel_name(self, channel_name):
+    cpdef object is_valid_channel_name(self, channel_name):
         return self._channel_name_regex.match(channel_name)
 
-    cpdef create_new_channel(self, channel_name, channel_class=None):
+    cpdef _Channel create_new_channel(self, channel_name, channel_class=None):
         """Should be called by publishers to open a *new* channel.
 
         Client code (message publishers or subscribers, etc.) wanting
@@ -177,7 +177,7 @@ cdef class MessageBus(Service):
 
         return channel
 
-    cpdef get_channel(self, channel_name):
+    cpdef _Channel get_channel(self, channel_name):
         """Used to get a reference to an *existing* channel.
 
         The `channel_name` must be complete. Wildcards are not allowed
@@ -191,16 +191,15 @@ cdef class MessageBus(Service):
         else:
             raise UnknownChannel(channel_name)
 
-    def is_channel_open(self, channel_name):
+    cpdef is_channel_open(self, channel_name):
         return channel_name in self._channels
 
-    def get_open_channel_names(self):
+    cpdef get_open_channel_names(self):
         return self._channels.keys()
 
-    cpdef subscribe(self, channel_name, subscriber,
-                    include_subchannels=False,
-                    async=True,
-                    thread_id=0):
+    cpdef Subscription subscribe(
+        self, channel_name, subscriber,
+        include_subchannels=False, async=True, thread_id=0):
         """
         Wildcards are allowed: top_channel.sub_channel.*
         """
@@ -230,13 +229,14 @@ cdef class MessageBus(Service):
 
 
     ##################################################
-    ## turn_on_dedicated_thread_mode should be replaced with
+    ## @@TR: turn_on_dedicated_thread_mode should be replaced with
     ## set_dispatcher method that accepts either a dispatcher instance
     ## or a dispatcher class that should be instantiated.  When a new
     ## one is set, the existing dispatcher should be stopped.
     def turn_on_dedicated_thread_mode(self):
         self._mutex.acquire()
         try:
+            self._dispatcher.stop()
             self._dispatcher = DedicatedThreadMsgDispather(
                 internal_log_channel=self._internal_log_channel,
                 max_queue_size=self._settings['max_queue_size'])

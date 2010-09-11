@@ -11,15 +11,8 @@ from cpython.object cimport PyObject_Str, PyObject_Unicode
 from dss.dsl.Walker cimport Walker
 from dss.dsl.Visitor cimport Visitor
 from dss.dsl.VisitorMap cimport VisitorMap
-
-
 from dss.dsl.Serializer cimport Serializer
-
-from dss.dsl.safe_strings cimport safe_bytes, safe_unicode
-#from dss.dsl.safe_strings import (safe_unicode, safe_bytes)
-
 from dss.dsl.xml.xml_escape_unicode cimport xml_escape_unicode
-
 from dss.dsl.xml.coretypes cimport (
     XmlDoc, XmlName, XmlElement, XmlElementProto, XmlAttribute,
     XmlEntityRef, XmlCData, Comment)

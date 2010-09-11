@@ -5,6 +5,7 @@ from dss.sys.Queue cimport BlockingQueue
 cdef class MessageBus(Service) # forward declaration
 
 from dss.pubsub._Channel cimport _Channel
+from dss.pubsub.Subscription cimport Subscription
 
 cdef class AbstractAsyncMsgDispatcher:
     cdef object _internal_log_channel
@@ -39,10 +40,14 @@ cdef class MessageBus(Service):
     cdef readonly double last_async_dispatch_time
 
     # public methods
-    cpdef object create_new_channel(self, channel_name, channel_class=?)
-    cpdef object get_channel(self, channel_name)
-    cpdef object subscribe(self, channel_name, subscriber,
+    cpdef _Channel create_new_channel(self, channel_name, channel_class=?)
+    cpdef _Channel get_channel(self, channel_name)
+    cpdef Subscription subscribe(self, channel_name, subscriber,
                            include_subchannels=?, async=?, thread_id=?)
+    cpdef object get_open_channel_names(self)
+    cpdef object is_valid_channel_name(self, channel_name)
+    cpdef object is_channel_open(self, channel_name)
+
     # private methods
     cpdef _Channel _init_channel(self, channel_name, channel_class=?)
     cpdef object _queue_msg_for_async_subs(
