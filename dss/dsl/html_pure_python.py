@@ -55,15 +55,14 @@ It's argued that template languages, compared to Python:
      (non-programmers, junior developers, contractors, etc.).
 
 I used to believe these arguments but recently I've come to see them
-as mostly dogma. Consider this module as evidence for my
-counterargument:
+as mostly dogma. Consider the example code in this module as evidence
+for my counterargument:
 
-  It is easy to generate correct HTML from plain Python without a)
-  blurring the separation between the domain/application and
-  presentation layers, b) creating spaghetti code (HTML fragments
-  embedded in strings, a mess of str concats, etc.), or c) screwing up
-  the HTML-escaping.  Furthermore, there are big advantages to doing
-  so:
+It is easy to generate correct HTML from plain Python without a)
+blurring the separation between the domain/application and
+presentation layers, b) creating spaghetti code (HTML fragments
+embedded in strings, a mess of str concats, etc.), or c) screwing up
+the HTML-escaping.  Furthermore, there are big advantages to doing so:
 
   1) Full tool-chain support:
      - editor support: syntax highlighting, code nav tools,
@@ -110,26 +109,25 @@ counterargument:
      Mako is also 4000, and Jinja2 seems to be almost 6000 (excluding
      the test suite).
 
-  My rebuttal to argument (d) (work-flow) is YAGNI!  The vast majority
-  of people writing templates are developers.  Designers usually
-  contribute mockups or css.  The rare designers who do actually work
-  with templates are fully capable of learning a subset of Python,
-  especially when it's less complicated than the template language
-  syntax.
+My rebuttal to argument (d) (work-flow) is YAGNI!  The vast majority
+of people writing templates are developers.  Designers usually
+contribute mockups or css.  The rare designers who do actually work
+with templates are fully capable of learning a subset of Python,
+especially when it's less complicated than the template language
+syntax.
 
-  Anyone who buys argument (e) (sandboxing and gentle error handling)
-  is living in the past by assuming that server-side domain code is
-  somehow more important than the presentation layer or what happens
-  on the browser and that it should be held to a higher standard.  A
-  bug is a bug.  These days, mistyped template variable names,
-  incorrect HTML/Javascript, missing or incorrect parts of the UI are
-  just as unacceptable as bugs or syntax errors in the back-end.  They
-  should be detected and handled early. Presentation layer code is
-  just as important as the back-end and should be held to the same
-  standards.  Furthermore, if someone can include Javascript in the
-  template there is no sandboxing.  The same people I've heard using
-  this argument are also advocates of code-review, so I'm confused by
-  their logic.
+Anyone who buys argument (e) (sandboxing and gentle error handling) is
+living in the past by assuming that server-side domain code is somehow
+more important than the presentation layer or what happens on the
+browser and that it should be held to a higher standard.  A bug is a
+bug.  These days, mistyped template variable names, incorrect
+HTML/Javascript, missing or incorrect parts of the UI are just as
+unacceptable as bugs or syntax errors in the back-end.  They should be
+detected and handled early. Presentation layer code is just as
+important as the back-end and should be held to the same standards.
+Furthermore, if someone can include Javascript in the template there
+is no sandboxing.  The same people I've heard using this argument are
+also advocates of code-review, so I'm confused by their logic.
 
 The basic usage work-flow for this module is:
 
@@ -180,14 +178,17 @@ Table Of Contents
   8: Basic examples
   9: Extended example using some fictional model data
 
-If you don't like the tag syntax used in sections 5 to 9 (inspired by
-Cliff Wells' 'Brevé'), please just remember my main argument and use
-your imagination to dream up something better.  Twisted / Nevow's
-'Stan' is another way of doing it. Lisp / scheme programmers are
-using similar embedded DSLs for HTML-generation
-(http://article.gmane.org/gmane.lisp.scheme.plt/16412).  S-expressions
-and the code-as-data / data-as-code philosophy make such a style very
-natural in Lisps.
+The tag syntax in sections 5 to 9 comes from Donovan Preston's 'Stan'
+(part of Twisted / Nevow) and Cliff Wells' 'Brevé'.  If you don't like
+it, please just remember my main argument and use your imagination to
+dream up something better.  Lisp / scheme programmers are using
+similar embedded DSLs for HTML-generation.  S-expressions and the
+code-as-data / data-as-code philosophy make such a style very natural
+in Lisps.  My argument and this code are an echo of what Stan, Brevé
+and various lisp libraries have been doing for a long time.  (see
+http://www.kieranholland.com/code/documentation/nevow-stan/
+http://breve.twisty-industries.com/ and
+http://article.gmane.org/gmane.lisp.scheme.plt/16412)
 
 I find this `visitor pattern` variation much more interesting than this
 particular tree building syntax.  Kudos to Python's dynamic, yet
@@ -223,11 +224,28 @@ There are a few uses cases where I still use and appreciate templates:
 
   - when composing email templates
 
-Another option for these use cases, is to put any large text blocks in
+Another option for these use cases is to put any large text blocks in
 module level constants (to avoid having strange indentation) and use
 Markdown, Textile, ReST, or something similar to handle the markup
 prior to labeling them as `safe_unicode` (see below) that doesn't need
 any further escaping.
+
+p.s. I discovered after writing this that Cliff Wells wrote a similar
+rant back in 2007:  http://www.enemyofthestatement.com/post/by_tag/29
+
+p.p.s Christopher Lenz wrote a good reply to Cliff's post:
+
+    In the end, the reason why I personally wouldn't use something like
+    Stan or Breve is because I actually want to work directly with the
+    HTML, CSS, and Javascript in my application. I want my text editor
+    of choice  to be able to assist me with all the tools it provides
+    for working with markup, including support for embedded CSS and
+    Javascript. I want to be able to quickly preview a template by
+    opening it directly in the browser, without having to run it
+    through the template engine first. When I'm working on a template,
+    I want to be using HTML, not  Python.
+    -- http://www.cmlenz.net/archives/2007/01/genshi-smells-like-php
+
 """
 from __future__ import with_statement
 import types
