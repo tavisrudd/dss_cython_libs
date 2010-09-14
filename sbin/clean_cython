@@ -1,1 +1,6 @@
-for F in `find dss -name *pyx`; do rm ${F/.pyx/.c} ${F/.pyx/.so}; done
+#!/bin/bash
+rm -rf build/
+for F in `find dss -name *pyx`; do 
+    [[ -e _pretend_no_cython ]] || rm ${F/.pyx/.c}
+    rm ${F/.pyx/.so}
+done
