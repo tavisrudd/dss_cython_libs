@@ -60,7 +60,7 @@ from dss.dsl.Walker cimport Walker
 from dss.dsl.Visitor cimport Visitor
 from dss.dsl.VisitorMap cimport VisitorMap
 
-from dss.dsl.safe_strings import safe_bytes, safe_unicode
+from dss.dsl.safe_strings import safe_unicode
 
 cdef class NoneVisitor(Visitor):
     cpdef visit(self, obj, Walker walker):
@@ -83,10 +83,6 @@ cdef class UnicodeVisitor(Visitor):
         walker.emit(obj)
 
 SafeUnicodeVisitor = UnicodeVisitor
-
-cdef class SafeBytesVisitor(Visitor):
-    cpdef visit(self, obj, Walker walker):
-        walker.emit(PyUnicode_FromEncodedObject(obj, walker.input_encoding, "strict"))
 
 cdef class NumberVisitor(Visitor):
     cpdef visit(self, obj, Walker walker):
@@ -132,7 +128,6 @@ sequence_types = (tuple, list, deque, set, frozenset, xrange, array, types.Gener
 basic_default_visitors_map = VisitorMap({
     str: StrVisitor(),
     unicode: UnicodeVisitor(),
-    safe_bytes: SafeBytesVisitor(),
     safe_unicode: SafeUnicodeVisitor(),
 
     types.NoneType: NoneVisitor(),

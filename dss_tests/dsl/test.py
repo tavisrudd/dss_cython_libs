@@ -3,7 +3,7 @@
 
 from decimal import Decimal
 
-from dss.dsl.safe_strings import safe_unicode, safe_bytes
+from dss.dsl.safe_strings import safe_unicode
 from dss.dsl.Serializer import Serializer
 from dss.dsl import html
 from dss.dsl.xml.serializers import XmlSerializer
@@ -107,7 +107,6 @@ escapings = {
 
 ESCAPING_TEST_SET = tuple(
     [(safe_unicode(k), k) for k in escapings]
-    +[(safe_bytes(k), k) for k in escapings]
     +[(k, v) for k, v in escapings.iteritems()]
     +[(k*200, v*200) for k, v in escapings.iteritems()]
     +[('--%s--'%k, '--%s--'%v) for k, v in escapings.iteritems()]
@@ -193,30 +192,6 @@ TAG_CLASS_ATTRIBUTE_TEST_SET = tuple(
 
 ################################################################################
 ## test functions
-def test_sanitized_string_types():
-    u = safe_unicode('a')
-    s = safe_bytes('b')
-
-    assert type(s.decode('utf-8')) == safe_unicode
-    assert type(u.encode('utf-8')) == safe_bytes
-
-    assert type(u+safe_unicode('a')) == safe_unicode
-    assert type(u+u'234') == unicode
-    assert type(u'234'+u) == unicode
-    assert type('234'+u) == unicode
-
-    assert type(s+safe_unicode('a')) == safe_unicode
-    assert type(s+safe_bytes('a')) == safe_bytes
-    assert type(s+u'234') == unicode
-    assert type(s+'234') == str
-    assert type(u'234'+s) == unicode
-    assert type('234'+s) == str
-
-    assert type(''.join([s]*10)) == str
-    assert type(s.join([s]*10)) == str
-
-    assert type(u.join([u]*10)) == unicode
-    assert type(''.join([u]*10)) == unicode
 
 def test_init_serializer():
     s1 = Serializer()

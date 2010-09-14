@@ -1,13 +1,45 @@
 #!/usr/bin/env python
 import os.path
 import itertools
+import sys
 
-from distutils.core import setup
 from dss.version import version
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
 
-##################################################
+################################################################################
+## This unfortunate hack required by setuptools comes from lxml's setup.py
+extra_options = {}
+
+try:
+    if os.path.exists('_pretend_no_cython'):
+        print '*** building without cython support ***'
+        raise ImportError
+    from Cython.Distutils import build_ext
+    CYTHON_INSTALLED = True
+    extra_options['cmdclass'] = {'build_ext': build_ext}
+    # work around stupid setuptools hack by providing a fake Pyrex
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "fake_pyrex"))
+except ImportError:
+    CYTHON_INSTALLED = False
+
+try:
+    import pkg_resources
+    try:
+        pkg_resources.require("setuptools>=0.6c5")
+    except pkg_resources.VersionConflict:
+        from ez_setup import use_setuptools
+        use_setuptools(version="0.6c5")
+    #pkg_resources.require("Cython==0.9.6.10")
+    from setuptools import setup
+    extra_options["zip_safe"] = False
+except ImportError:
+    # no setuptools installed
+    from distutils.core import setup
+
+from distutils.extension import Extension
+
+# @@TR: see http://pyyaml.org/browser/pyyaml/trunk/setup.py for more ideas
+
+################################################################################
 extension_dependencies = {
     'dss.sys.Queue':['dss.sys.lock'],
     'dss.sys.LRUCache':[
@@ -25,7 +57,6 @@ extension_dependencies = {
         ],
     'dss.net.IOEventHandler':[],
 
-    #
     'dss.net.Acceptor':[
         'dss.sys.services.Service',
         'dss.sys.services.ThreadPool',
@@ -64,13 +95,11 @@ extension_dependencies = {
         'dss.dsl.Walker',
         'dss.dsl.Visitor',
         'dss.dsl.VisitorMap',
-        'dss.dsl.safe_strings',
         'dss.dsl.xml.xml_escape_unicode',
         ],
     'dss.dsl.xml.serializers':[
         'dss.dsl.xml.coretypes',
         'dss.dsl.xml.xml_escape_unicode',
-        'dss.dsl.safe_strings',
         'dss.dsl.Serializer',
         'dss.dsl.Walker',
         'dss.dsl.VisitorMap',
@@ -90,9 +119,13 @@ c_src_files = {'dss.sys.time_of_day':['dss/sys/_time_of_day.c'],
 
 def get_src_file_paths(module_name):
     src_file_root = module_name.replace('.', os.path.sep)
-    files = [src_file_root+'.pyx']
-    if os.path.exists(src_file_root+'.pxd'):
-        files.append(src_file_root+'.pxd')
+    if CYTHON_INSTALLED:
+        files = [src_file_root+'.pyx']
+        if os.path.exists(src_file_root+'.pxd'):
+            files.append(src_file_root+'.pxd')
+    else:
+        files = [src_file_root+'.c']
+
     if module_name in c_src_files:
         files.extend(c_src_files[module_name])
     return files
@@ -123,6 +156,7 @@ def get_cython_extensions():
     dss.sys.LRUCache
 
     dss.dsl.safe_strings
+    dss.dsl.Markup
     dss.dsl.Visitor
     dss.dsl.VisitorMap
     dss.dsl.Walker
@@ -144,20 +178,20 @@ def get_cython_extensions():
     dss.pubsub.MessageBus
     dss.pubsub.Subscription
     dss.pubsub._Channel
+
     dss.log.LogChannel
 
     """.splitlines() if not ln.strip().startswith('#')]
             if modname]
 
-setup(name = "Damn Simple Systems - Core Modules",
-      version = version,
-      author = "Tavis Rudd (Damn Simple Solutions Ltd.)",
-      author_email = "tavis@damnsimple.com",
-      description = "Damn Simple Systems - Core Modules/Libraries",
-      keywords = "",
-      license = 'BSD',
-      url = "http://damnsimple.com/",
-
+setup(name="Damn Simple Solutions - Cython Libs",
+      version=version,
+      author="Tavis Rudd (Damn Simple Solutions Ltd.)",
+      author_email="tavis@damnsimple.com",
+      description="Damn Simple Solutions - Misc. Cython Libraries",
+      keywords="",
+      license='BSD',
+      url="http://damnsimple.com/",
       packages=[
           'dss.sys',
           'dss.sys.services',
@@ -171,4 +205,4 @@ setup(name = "Damn Simple Systems - Core Modules",
           ],
       include_dirs=['dss/sys'],
       ext_modules=get_cython_extensions(),
-      cmdclass={'build_ext': build_ext})
+      **extra_options)

@@ -4,13 +4,17 @@ cdef extern from "Python.h":
     ctypedef struct PyObject:
         PyTypeObject *ob_type
 
+    # cython's compiler complains about this already being a cython
+    # builtin type, but it appears to be valid and is the only way I
+    # can find to subclass a builtin.  Note, this approach is *invalid*
+    # for `tuples` and `str`:
+    # http://www.mail-archive.com/cython-dev@codespeak.net/msg04858.html
+    ctypedef class __builtin__.dict [object PyDictObject]:
+        pass
+
     # use this rather than python_dict.pxd's copy because of our use
     # of PyObject.ob_type:
     PyObject* PyDict_GetItem(object d, object key)
-
-cdef extern from "dictobject.h":
-    ctypedef class __builtin__.dict [object PyDictObject]:
-        pass
 
 from cpython.type cimport PyType_Check
 from cpython.object cimport PyObject_IsSubclass, PyObject_IsInstance

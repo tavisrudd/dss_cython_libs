@@ -1,9 +1,8 @@
-import types
+from types import InstanceType
 
 from dss.dsl._VisitorMapContextManager import _VisitorMapContextManager
 
-cdef object _InstanceType = types.InstanceType # Avoid module dictionary lookup
-cdef object Py_None = None       # Avoid module dictionary lookup
+cdef object _InstanceType = InstanceType # Avoid module dictionary lookup
 
 cdef class DEFAULT:
     pass
@@ -28,11 +27,11 @@ cdef class VisitorMap(dict):
             result = self._get_parent_type_visitor(obj, <object>ob_type)
             if result:
                 return result
-            elif self.parent_map is not Py_None:
+            elif self.parent_map is not None:
                 result = self.parent_map.get_visitor(obj, 0)
             if use_default and not result:
                 result = self.get(DEFAULT)
-                if not result and self.parent_map is not Py_None:
+                if not result and self.parent_map is not None:
                     result = self.parent_map.get(DEFAULT)
             return result
 

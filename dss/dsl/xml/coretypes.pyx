@@ -1,4 +1,4 @@
-from dss.dsl.safe_strings import (safe_unicode, safe_bytes)
+from dss.dsl.safe_strings import safe_unicode
 
 cdef object Py_None = None     # Avoid dictionary lookups for 'None'
 
@@ -48,7 +48,7 @@ cdef class XmlName:
         return self._str
 
     def __str__(self):
-        return safe_bytes(self.__unicode__().encode(_get_default_encoding()))
+        return self.__unicode__().encode(_get_default_encoding())
 
 cdef class XmlEntityRef:
     def __init__(self, alpha, num, description):
@@ -63,7 +63,7 @@ cdef class XmlEntityRef:
         return self._str
 
     def __str__(self):
-        return safe_bytes(self._str)
+        return self._str
 
 class XmlAttributes(list):
     __slots__ = []

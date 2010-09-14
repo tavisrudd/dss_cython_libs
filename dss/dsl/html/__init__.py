@@ -1,10 +1,9 @@
 """Provides all html tags and character entities, with lowercase names.
 """
-from dss.dsl.safe_strings import (safe_unicode, safe_bytes)
+from dss.dsl.safe_strings import safe_unicode
 from dss.dsl.xml.coretypes import (
     XmlCData, XmlName, XmlElement, XmlElementProto, XmlEntityRef, Comment)
 from dss.dsl.html.character_entities import html_entities as _html_entities
-safe_bytes # silence pyflakes
 
 class _GetAttrDict(dict):
     def __getattr__(self, k):

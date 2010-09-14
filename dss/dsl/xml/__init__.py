@@ -5,7 +5,7 @@ This was inspired by Stan (and Breve), but is far simpler and more
 flexible.
 """
 from dss.dsl.VisitorMap import VisitorMap
-from dss.dsl.safe_strings import (safe_unicode, safe_bytes)
+from dss.dsl.safe_strings import safe_unicode
 from dss.dsl.xml.coretypes import (
     XmlDoc, XmlName, XmlEntityRef, XmlAttributes, XmlAttribute,
     XmlElement, XmlElementProto, XmlCData, Comment)
@@ -17,7 +17,7 @@ from dss.dsl.Serializer import Serializer
 (
     VisitorMap,
     Serializer, XmlSerializer,
-    safe_unicode, safe_bytes,
+    safe_unicode,
     XmlDoc, XmlName, XmlEntityRef, XmlAttributes, XmlAttribute,
     XmlElement, XmlElementProto, XmlCData, Comment)
 

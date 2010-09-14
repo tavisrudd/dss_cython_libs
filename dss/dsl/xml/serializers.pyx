@@ -1,5 +1,5 @@
 from dss.dsl.Serializer import (basic_default_visitors_map, StrVisitor)
-from dss.dsl.safe_strings import (safe_unicode, safe_bytes)
+from dss.dsl.safe_strings import safe_unicode
 
 cdef class XmlEscapingStrVisitor(Visitor):
     cpdef visit(self, obj, Walker walker):
