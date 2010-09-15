@@ -12,7 +12,7 @@ from dss.dsl.xml.serializers import (
     xml_default_visitors_map)
 from dss.dsl.html import (html, head, title, body, span, div, table, tr, td)
 
-from dss.dsl import html_pure_python as pure_python
+from dss.dsl import throw_out_your_templates as pure_python
 
 def purepy_serialize(obj):
     return pure_python.Serializer(pure_python.xml_default_visitors_map).serialize(obj)
@@ -54,25 +54,24 @@ def benchmark_serialization(obj, label=None, iterations=1000):
              ))
 
     normal = timeit(XmlSerializer().serialize, obj)
+    print format_result('normal', normal)
     if label in pure_python_data:
         py = timeit(purepy_serialize, pure_python_data[label])
-        print format_result('pure-py', py)
-        normal = py
+        print format_result('pure-py', py, normal)
 
     baseclass = timeit(Serializer(visitor_map=xml_default_visitors_map).serialize, obj)
     optimized = timeit(_OptimizedXmlSerializer().serialize, obj)
-    compiled = timeit(XmlSerializer().serialize, precompiler.serialize(obj))
+    precompiled = timeit(XmlSerializer().serialize, precompiler.serialize(obj))
     both = timeit(_OptimizedXmlSerializer().serialize, precompiler.serialize(obj))
-    print format_result('normal', normal)
     print format_result('baseclass', baseclass, normal)
     print format_result('optimized', optimized, normal)
-    print format_result('compiled', compiled, normal)
+    print format_result('precompiled', precompiled, normal)
     print format_result('compiled + opt', both, normal)
 
 ################################################################################
-#rows = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10) for x in range(600)]
+rows = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10) for x in range(1000)]
 #rows = [xrange(10) for x in range(500)]
-rows = [['abcdefghij']*10 for x in range(100)]
+#rows = [['abcdefghij']*10 for x in range(100)]
 
 pure_python_data = {
     'random divs, ints, strs, and nested lists':
@@ -124,16 +123,6 @@ benchmark_serialization(
     iterations=20,
     label='Massive table in lambda')
 
-su = safe_unicode
-tbs, tbe = su('<table>'), su('</table>')
-trs, tre = su('<tr>'), su('</tr>')
-tds, tde = su('<td>'), su('</td>')
-benchmark_serialization(
-    lambda : (
-        tbs,((trs, ((tds, col, tde) for col in row), tre) for row in rows), tbe),
-    iterations=20,
-    label='Massive table in lambda 2')
-
 def bench_django(iterations=50):
     from django.conf import settings
     from django.template import Context, Template
@@ -170,7 +159,7 @@ def bench_cheetah(iterations=50):
     #end def"""
     compilerSettings = dict(useNamemapper=False,
                             useSearchList=False,
-                            useFilters=False)
+                            useFilters=True)
     T = Template.compile(src, compilerSettings=compilerSettings)
     #print T().render(rows)
     t = T()
@@ -180,5 +169,5 @@ def bench_cheetah(iterations=50):
         t.render(rows)
     end = time()
     duration = end-start
-    print '%0.4f msec/iter'%((duration/iterations)*1000)
+    print 'Cheetah %0.4f msec/iter'%((duration/iterations)*1000)
 bench_cheetah()
