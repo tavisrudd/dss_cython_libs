@@ -195,7 +195,7 @@ setup(name="Damn Simple Solutions - Cython Libs",
       packages=[
           'dss.sys',
           'dss.sys.services',
-          'dss.sys._internal'
+          'dss.sys._internal',
           'dss.pubsub',
           'dss.log',
           'dss.net',
